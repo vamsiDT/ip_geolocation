@@ -1,8 +1,6 @@
 import requests
 import pandas as pd
-from ip2geotools.databases.noncommercial import DbIpCity
-
-
+from ip2geotools.databases.noncommercial import DbIpCity,MaxMindGeoLite2City
 import json
 
 headers = {
@@ -16,19 +14,22 @@ lati=list()
 longi=list()
 sc=list()
 
+
 for ip in IpGeoloc["ip"]:
 
     ############ GEO LOCATE ####################
-    response = DbIpCity.get(ip, api_key='free')
+    dat={}
+    response = MaxMindGeoLite2City.get(ip, api_key='free')
     latitude =  response.latitude
     longitude = response.longitude
     lati.append(latitude)
     longi.append(longitude)
     
     
-    
     ################# FINALLY CHECK THE SCORE OF OBTAINED GEO LOCATION FROM MATTHIEU'S API ###########3
-    data = '{"' + str(ip) + '":[' + str(latitude) + "," + str(longitude) + ']}'
+# data = '{"' + str(ip) + '":[' + str(latitude) + "," + str(longitude) + ']}'
+    dat[str(ip)]=[latitude,longitude]
+    data=json.dumps(dat)
     scoreReq = requests.post('http://ares.planet-lab.eu:8000/', headers=headers, data=data)
     scoreResp = scoreReq.content.decode('utf-8')
     score=json.loads(scoreResp)
