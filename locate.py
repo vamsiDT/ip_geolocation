@@ -17,17 +17,25 @@ longi=list()
 sc=list()
 
 for ip in IpGeoloc["ip"]:
+
+    ############ GEO LOCATE ####################
     response = DbIpCity.get(ip, api_key='free')
     latitude =  response.latitude
     longitude = response.longitude
-    data = '{"' + str(ip) + '":[' + str(latitude) + "," + str(longitude) + ']}'
-    score = requests.post('http://ares.planet-lab.eu:8000/', headers=headers, data=data)
-    content = score.content.decode('utf-8')
-    x=json.loads(content)
-    sc.append(x["score"])
     lati.append(latitude)
     longi.append(longitude)
     
+    
+    
+    ################# FINALLY CHECK THE SCORE OF OBTAINED GEO LOCATION FROM MATTHIEU'S API ###########3
+    data = '{"' + str(ip) + '":[' + str(latitude) + "," + str(longitude) + ']}'
+    scoreReq = requests.post('http://ares.planet-lab.eu:8000/', headers=headers, data=data)
+    scoreResp = scoreReq.content.decode('utf-8')
+    score=json.loads(scoreResp)
+    sc.append(score["score"])
+
+
+
 IpGeoloc["latitude"]=latitude
 IpGeoloc["longitude"]=longitude
 IpGeoloc["score"]=sc
