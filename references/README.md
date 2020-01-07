@@ -8,4 +8,4 @@
 1. https://github.com/joeljogy/Getting-GeoLocation
 
 ## PlanetLab
-1. [PlanetLab Cental API](https://www.planet-lab.org/doc/plc_api), [PLC API Tutorial](https://www.planet-lab.org/doc/plcapitut)
+1. PlanetLab Cental: [API](https://www.planet-lab.org/doc/plc_api), [Tutorial](https://www.planet-lab.org/doc/plcapitut)
