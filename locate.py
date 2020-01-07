@@ -1,7 +1,17 @@
+#%%
 import requests
 import pandas as pd
 from ip2geotools.databases.noncommercial import DbIpCity,MaxMindGeoLite2City
 import json
+from dns import resolver
+from dns import reversename
+
+#%%
+############ TESTING PURPOSES
+
+
+
+#%%
 
 headers = {
 'accept': 'application/json',
