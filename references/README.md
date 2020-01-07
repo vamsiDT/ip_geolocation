@@ -4,7 +4,7 @@
 1. ```HLOC``` https://github.com/tumi8/hloc/tree/tma17
 
 ## python geoip database tools
-1. https://github.com/tomas-net/ip2geotools
+1. ```ip2geotools``` https://github.com/tomas-net/ip2geotools
 1. https://github.com/joeljogy/Getting-GeoLocation
 
 ## PlanetLab
