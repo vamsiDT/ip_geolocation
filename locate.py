@@ -19,7 +19,7 @@ for ip in IpGeoloc["ip"]:
 
     ############ GEO LOCATE ####################
     dat={}
-    response = MaxMindGeoLite2City.get(ip, api_key='free')
+    response = DbIpCity.get(ip, api_key='free')
     latitude =  response.latitude
     longitude = response.longitude
     lati.append(latitude)
