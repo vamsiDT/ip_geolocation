@@ -8,7 +8,7 @@ import json
 from dns import resolver
 from dns import reversename
 import xmlrpc.client as xmlrpclib# For planetlab cental api
-
+from geopy.distance import geodesic
 #%%
 ############ Planetlab
 api_server = xmlrpclib.ServerProxy('https://www.planet-lab.eu/PLCAPI/', allow_none=True)
@@ -37,46 +37,75 @@ for node in boot_nodes:
     x=os.system('ssh -o "StrictHostKeyChecking no" -o "PasswordAuthentication no" -o "ConnectTimeout 4" -l upmc_netmet '+node['hostname']+" echo works")
     if(not x):
         nodes.append(node)
+        
+#%%
+hostnames=list()
+site_id=list()
+latitude=list()
+longitude=list()
+for node in nodes:
+    hostnames.append(node['hostname'])
+    site_id.append(node['site_id'])
+    latitude.append((api_server.GetSites(auth,node['site_id']))[0]['latitude'])
+    longitude.append((api_server.GetSites(auth,node['site_id']))[0]['longitude'])
+dataframe=pd.DataFrame(data=None,columns=['hostnames','site_id','latitude','longitude'])
+dataframe['hostnames']=hostnames
+dataframe['site_id']=site_id
+dataframe['latitude']=latitude
+dataframe['longitude']=longitude
 #%%
         ################ SANITY CHECK FOR NODE STATE #####################
-file=open("/home/vamsi/src/master-3/netmet/ip_geolocation/working_nodes.dat", 'r+')
-for node in nodes:
-    print(node['hostname'])
-    file.write(node['hostname']+"\n")
-    # print(node['site_id'])
-    # print((api_server.GetSites(auth,node['site_id']))[0]['latitude'])
-sites=api_server.GetSites(auth,slice_node_ids)
+file=open("/home/vamsi/src/master-3/netmet/ip_geolocation/working_nodes.dat", 'w+')
+for hostname in dataframe['hostnames']:
+    print(hostname)
+    file.write(hostname + "\n")
+
 #%%
-
-node_df = pd.read_csv("loc",delimiter='\t',usecols=[1,3],names=['hostname','min_rtt'])
-
-
+os.system("/home/vamsi/src/master-3/netmet/ip_geolocation/loc.sh > /home/vamsi/src/master-3/netmet/ip_geolocation/loc.dat")
+node_df = pd.read_csv("loc.dat",delimiter='\t',usecols=[1,3],names=['hostname','min_rtt'])
 #%%
 node_df=node_df.sort_values(by='min_rtt',ascending=True)
 node_df=node_df.reset_index(drop=True)
-l=node_df['min_rtt']
 
+site_id=list()
+latitude=list()
+longitude=list()
+for i in node_df['hostname']:
+    ind=list(dataframe['hostnames']).index(str(i))
+    site_id.append(dataframe['site_id'][ind])
+    latitude.append(dataframe['latitude'][ind])
+    longitude.append(dataframe['longitude'][ind])
+node_df['site_id']=site_id
+node_df['latitude']=latitude
+node_df['longitude']=longitude
+#############################
+nsite_used=3
+#############################
+n_lochosts=list()
+n_locsites=list()
+n_loclat=list()
+n_loclon=list()
+# n_lochosts.append(dataframe['hostnames'][ind])
+# i=1;
+
+for i in node_df['hostname']:
+    ind=list(dataframe['hostnames']).index(str(i))
+    if(dataframe['site_id'][ind] not in n_locsites):
+        n_locsites.append(dataframe['site_id'][ind])
+        n_lochosts.append(dataframe['hostnames'][ind])
+        n_loclat.append(dataframe['latitude'][ind])
+        n_loclon.append(dataframe['longitude'][ind])
 print(node_df['hostname'][0])
 print(node_df['hostname'][1])
 print(node_df['hostname'][2])
+print("##########")
+print(n_lochosts[0])
+print(n_lochosts[1])
+print(n_lochosts[2])
 # node_df = pd.DataFrame(columns=['hostname','node_id','site_id','latitude','longitude'])
 # for site in sites:
     # print(site['node_ids'])
 
-
-#%%
-# slide_node_hostnames= [node['hostname']] for node in slice_nodes
-# all_node_hostnames = [node['hostname'] for node in api_server.GetNodes(auth, all_node_ids, ['hostname'])]
-
-node_ids=list()
-node_hostnames=list()
-# os.popen('ssh -o "StrictHostKeyChecking no" -l upmc_netmet '+i+" ls").read()
-for i in range(len(slice_nodes)):
-    x=os.system('ssh -o "StrictHostKeyChecking no" -l upmc_netmet '+slice_nodes[i]['hostname']+" echo works")
-    if(not x):
-        node_hostnames.append(all_node_hostnames[i])
-        node_ids.append(all_node_ids[i])
-        
 
 #%%
 

@@ -9,3 +9,9 @@
 
 ## PlanetLab
 1. PlanetLab Cental: [API](https://www.planet-lab.org/doc/plc_api), [Tutorial](https://www.planet-lab.org/doc/plcapitut)
+
+## GEOPY Python
+```
+Useful tool to deal with map coordinates and distances
+```
+1. [Geopy](https://geopy.readthedocs.io/en/stable/)
