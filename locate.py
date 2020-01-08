@@ -2,6 +2,7 @@
 import os
 import requests
 import pandas as pd
+import numpy as np
 from ip2geotools.databases.noncommercial import DbIpCity,MaxMindGeoLite2City
 import json
 from dns import resolver
@@ -17,8 +18,6 @@ auth['Username'] = 'f2013790@goa.bits-pilani.ac.in'
 auth['AuthString'] = 'kira.1234'
 authorized = api_server.AuthCheck(auth)
 #%%
-# all_nodes = api_server.GetNodes(auth)
-# print(all_nodes)
 plslice=api_server.GetSlices(auth)[0]
 slice_node_ids=plslice["node_ids"]
 slice_nodes=api_server.GetNodes(auth,slice_node_ids)
@@ -35,13 +34,35 @@ for node in slice_nodes:
 nodes=list()
 for node in boot_nodes:
     # print(node['hostname'])
-    x=os.system('ssh -o "StrictHostKeyChecking no" -l upmc_netmet '+node['hostname']+" echo works")
+    x=os.system('ssh -o "StrictHostKeyChecking no" -o "PasswordAuthentication no" -o "ConnectTimeout 4" -l upmc_netmet '+node['hostname']+" echo works")
     if(not x):
         nodes.append(node)
 #%%
         ################ SANITY CHECK FOR NODE STATE #####################
+file=open("/home/vamsi/src/master-3/netmet/ip_geolocation/working_nodes.dat", 'r+')
 for node in nodes:
     print(node['hostname'])
+    file.write(node['hostname']+"\n")
+    # print(node['site_id'])
+    # print((api_server.GetSites(auth,node['site_id']))[0]['latitude'])
+sites=api_server.GetSites(auth,slice_node_ids)
+#%%
+
+node_df = pd.read_csv("loc",delimiter='\t',usecols=[1,3],names=['hostname','min_rtt'])
+
+
+#%%
+node_df=node_df.sort_values(by='min_rtt',ascending=True)
+node_df=node_df.reset_index(drop=True)
+l=node_df['min_rtt']
+
+print(node_df['hostname'][0])
+print(node_df['hostname'][1])
+print(node_df['hostname'][2])
+# node_df = pd.DataFrame(columns=['hostname','node_id','site_id','latitude','longitude'])
+# for site in sites:
+    # print(site['node_ids'])
+
 
 #%%
 # slide_node_hostnames= [node['hostname']] for node in slice_nodes
