@@ -1,23 +1,24 @@
--e node:	merkur.planetlab.haw-hamburg.de	minrtt:	28.023
--e node:	cse-white.cse.chalmers.se	minrtt:	34.274
--e node:	aladdin.planetlab.extranet.uni-passau.de	minrtt:	
--e node:	planetlabeu-1.tssg.org	minrtt:	39.811
--e node:	pl2.uni-rostock.de	minrtt:	
--e node:	vicky.planetlab.ntua.gr	minrtt:	
--e node:	planetlabeu-2.tssg.org	minrtt:	
--e node:	stella.planetlab.ntua.gr	minrtt:	
--e node:	planetlab-1.ing.unimo.it	minrtt:	30.066
--e node:	planetlab2.informatik.uni-goettingen.de	minrtt:	
--e node:	planetlab1.cs.uit.no	minrtt:	
--e node:	ple44.planet-lab.eu	minrtt:	22.701
--e node:	onelab2.pl.sophia.inria.fr	minrtt:	36.747
--e node:	mars.planetlab.haw-hamburg.de	minrtt:	39.701
--e node:	pl2.prakinf.tu-ilmenau.de	minrtt:	37.008
--e node:	planetlab1.cs.vu.nl	minrtt:	24.424
--e node:	ple41.planet-lab.eu	minrtt:	
--e node:	kulcha.mimuw.edu.pl	minrtt:	
--e node:	planetlab1.xeno.cl.cam.ac.uk	minrtt:	31.587
--e node:	icnalplabs2.epfl.ch	minrtt:	
--e node:	ple42.planet-lab.eu	minrtt:	
--e node:	planetlab2.xeno.cl.cam.ac.uk	minrtt:	
--e node:	icnalplabs1.epfl.ch	minrtt:	15.900
+node,merkur.planetlab.haw-hamburg.de,minrtt,28.310
+node,cse-white.cse.chalmers.se,minrtt,
+node,aladdin.planetlab.extranet.uni-passau.de,minrtt,
+node,planetlabeu-1.tssg.org,minrtt,
+node,pl2.uni-rostock.de,minrtt,
+node,vicky.planetlab.ntua.gr,minrtt,59.312
+node,planetlabeu-2.tssg.org,minrtt,47.122
+node,stella.planetlab.ntua.gr,minrtt,
+node,planetlab-1.ing.unimo.it,minrtt,66.548
+node,planetlab2.informatik.uni-goettingen.de,minrtt,
+node,planetlab1.cs.uit.no,minrtt,93.848
+node,ple44.planet-lab.eu,minrtt,23.215
+node,onelab2.pl.sophia.inria.fr,minrtt,37.285
+node,mars.planetlab.haw-hamburg.de,minrtt,39.323
+node,pl2.prakinf.tu-ilmenau.de,minrtt,37.309
+node,planetlab1.cs.vu.nl,minrtt,25.131
+node,ple41.planet-lab.eu,minrtt,24.224
+node,kulcha.mimuw.edu.pl,minrtt,32.669
+node,planetlab1.xeno.cl.cam.ac.uk,minrtt,31.626
+node,icnalplabs2.epfl.ch,minrtt,16.557
+node,cse-yellow.cse.chalmers.se,minrtt,
+node,ple42.planet-lab.eu,minrtt,24.998
+node,planetlab2.xeno.cl.cam.ac.uk,minrtt,
+node,icnalplabs1.epfl.ch,minrtt,16.026

@@ -10,7 +10,7 @@ from dns import reversename
 import xmlrpc.client as xmlrpclib# For planetlab cental api
 from geopy.distance import geodesic
 import math
-
+import matplotlib.pyplot as plt
 #%%
 ############ Planetlab
 api_server = xmlrpclib.ServerProxy('https://www.planet-lab.eu/PLCAPI/', allow_none=True)
@@ -64,7 +64,7 @@ for hostname in dataframe['hostnames']:
 
 #%%
 os.system("/home/vamsi/src/master-3/netmet/ip_geolocation/loc.sh > /home/vamsi/src/master-3/netmet/ip_geolocation/loc.dat")
-node_df = pd.read_csv("loc.dat",delimiter='\t',usecols=[1,3],names=['hostname','min_rtt'])
+node_df = pd.read_csv("loc.dat",delimiter=',',usecols=[1,3],names=['hostname','min_rtt'])
 #%%
 node_df=node_df.sort_values(by='min_rtt',ascending=True)
 node_df=node_df.reset_index(drop=True)
@@ -108,7 +108,84 @@ print(n_lochosts[2])
 # for site in sites:
     # print(site['node_ids'])
 #%%
-os.system("/home/vamsi/src/master-3/netmet/ip_geolocation/rtt_dist.sh")
+os.system("/home/vamsi/src/master-3/netmet/ip_geolocation/rtt_dist.sh > /home/vamsi/src/master-3/netmet/ip_geolocation/rtt_dist.dat")
+#%%
+nodes_dist = pd.read_csv("rtt_dist.dat",delimiter=',',usecols=[1,3,5],names=['src_hostname','dst_hostname','min_rtt'])
+s_lat=list()
+s_lon=list()
+d_lat=list()
+d_lon=list()
+dist=list()
+
+for index, row in nodes_dist.iterrows():
+# for i in nodes_dist['src_hostname']:
+    
+    src_node=row['src_hostname']
+    dst_node=row['dst_hostname']
+    # print(src_node,"",dst_node)
+    ind=list(dataframe['hostnames']).index((src_node))
+    src_lat=list(dataframe['latitude'])[ind]
+    src_lon=list(dataframe['longitude'])[ind]
+    # print(ind)
+    ind=list(dataframe['hostnames']).index((dst_node))
+    dst_lat=list(dataframe['latitude'])[ind]
+    dst_lon=list(dataframe['longitude'])[ind]
+    print(ind,"",dst_lat,"",dst_lon)
+    
+    distance=geodesic([src_lat,src_lon],[dst_lat,dst_lon]).kilometers
+    
+    s_lat.append(src_lat)
+    s_lon.append(src_lon)
+    d_lat.append(dst_lat)
+    d_lon.append(dst_lon)
+    
+    dist.append(distance)
+   
+nodes_dist['src_lat'] = s_lat
+nodes_dist['src_lon'] = s_lon
+nodes_dist['dst_lat'] = d_lat
+nodes_dist['dst_lon'] = d_lon
+nodes_dist['distance']=dist
+#%%
+from sklearn import datasets, linear_model
+regr = linear_model.LinearRegression()
+x=list()
+y=list()
+for index,row in nodes_dist.iterrows():
+    if(row['min_rtt']>0):
+        x.append(row['distance'])
+        y.append(row['min_rtt'])
+
+x_sc = np.array(x)[:,np.newaxis]
+regr.fit(x_sc,y)
+y_pred = regr.predict(x_sc)
+
+fig,ax=plt.subplots(1,1)
+ax.set_xlabel("distance (Kilometers)")
+ax.set_ylabel("rtt (ms)")
+ax.set_title("rtt and distance relation between planetlab landmarks \n(upmc_netmet slice nodes only)")
+ax.scatter(x,y,s=1)
+ax.plot(x,y_pred)
+
+
+regr1 = linear_model.LinearRegression()
+x1=list()
+y1=list()
+for index,row in nodes_dist.iterrows():
+    if(row['min_rtt']>0):
+        y1.append(row['distance'])
+        x1.append(row['min_rtt'])
+
+x1_sc = np.array(x1)[:,np.newaxis]
+regr1.fit(x1_sc,y1)
+y1_pred = regr1.predict(x1_sc)
+
+fig1,ax1=plt.subplots(1,1)
+ax1.set_ylabel("distance (Kilometers)")
+ax1.set_xlabel("rtt (ms)")
+ax1.set_title("rtt and distance relation between planetlab landmarks \n(upmc_netmet slice nodes only)")
+ax1.scatter(x1,y1,s=1)
+ax1.plot(x1,y1_pred)
 
 #%%
     
