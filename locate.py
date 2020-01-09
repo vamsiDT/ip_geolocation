@@ -9,6 +9,8 @@ from dns import resolver
 from dns import reversename
 import xmlrpc.client as xmlrpclib# For planetlab cental api
 from geopy.distance import geodesic
+import math
+
 #%%
 ############ Planetlab
 api_server = xmlrpclib.ServerProxy('https://www.planet-lab.eu/PLCAPI/', allow_none=True)
@@ -105,6 +107,34 @@ print(n_lochosts[2])
 # node_df = pd.DataFrame(columns=['hostname','node_id','site_id','latitude','longitude'])
 # for site in sites:
     # print(site['node_ids'])
+#%%
+os.system("/home/vamsi/src/master-3/netmet/ip_geolocation/rtt_dist.sh")
+
+#%%
+    
+
+import localization as lx
+
+P=lx.Project(mode='Earth1',solver='LSE')
+
+
+P.add_anchor('anchore_A',(n_loclat[0],n_loclon[0]))
+P.add_anchor('anchore_B',(n_loclat[1],n_loclon[1]))
+P.add_anchor('anchore_C',(n_loclat[2],n_loclon[2]))
+
+t,label=P.add_target()
+
+t.add_measure('anchore_A',620)
+t.add_measure('anchore_B',900)
+t.add_measure('anchore_C',800)
+
+P.solve()
+
+# Then the target location is:
+
+print(t.loc)
+
+
 
 
 #%%
