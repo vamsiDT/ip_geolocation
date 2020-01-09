@@ -15,3 +15,9 @@
 Useful tool to deal with map coordinates and distances
 ```
 1. [Geopy](https://geopy.readthedocs.io/en/stable/)
+
+## Multilateration
+```
+Not sure about the correctness of the method in this git link
+```
+1. [Multilateration Implementation](https://github.com/glucee/Multilateration)
