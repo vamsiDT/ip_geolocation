@@ -18,5 +18,6 @@ Useful tool to deal with map coordinates and distances
 
 ## Multilateration
 
+1. [Multilateration Wikipedia (Very useful link)](https://en.wikipedia.org/wiki/Multilateration)
 1. [Multilateration Implementation (Not sure)](https://github.com/glucee/Multilateration)
-2. [Multilateration (Seems useful)](https://github.com/jurasofish/multilateration)
+1. [Multilateration (Seems useful)](https://github.com/jurasofish/multilateration)
