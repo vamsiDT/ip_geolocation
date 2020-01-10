@@ -211,7 +211,17 @@ def geolocateIP (ip):
 #    #%%
         
     
+    ######################
+    # regression predict function gives distance from given rtt
+    # these distances are radius of circles from 3 landmarks chosen above
+    # finally we need to find a best point where the target is located
+    ######################
     
+    # The code block below gives the target location, given 3 landmark locations 
+    # and target distances from the 3 landmarks
+    
+    # Any new method to find the optimize target location should be added here.
+    ###########################################################################
     try:
         P=lx.Project(mode='Earth1',solver='LSE')
         
@@ -228,12 +238,11 @@ def geolocateIP (ip):
         
         P.solve()
         
-        # Then the target location is:
-        # print(list([t.loc.x,t.loc.y]))
         return (list([t.loc.x,t.loc.y]))
     except:
-        # print(list([0,0]))
+
         return(list([0,0]))
+    ###########################################################################
         
 
 
