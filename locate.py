@@ -287,3 +287,9 @@ for ip in IpGeoloc["ip"]:
 IpGeoloc["latitude"]=latitude
 IpGeoloc["longitude"]=longitude
 IpGeoloc["score"]=sc
+
+#%%
+scores_dict = pd.read_csv("scores_ipup.dat",delimiter=',',usecols=[1,3,5,7,9],names=['ip','latitude','longitude','score','distancce_error_solvsdb'])
+scores_dict.to_json(r'scores_ipup.json',orient='records')
+with open('scores_ipup.json') as json_file:
+    scores_ipup = json.load(json_file)
