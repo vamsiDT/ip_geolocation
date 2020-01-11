@@ -2,6 +2,7 @@
 
 ## source-code for published techniques
 1. [HLOC TMA17](https://github.com/tumi8/hloc/tree/tma17)
+1. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3231493/
 
 ## python geoip database tools
 1. [ip2geotools](https://github.com/tomas-net/ip2geotools)
