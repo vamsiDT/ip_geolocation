@@ -11,8 +11,11 @@ import xmlrpc.client as xmlrpclib# For planetlab cental api
 from geopy.distance import geodesic
 import math
 import matplotlib.pyplot as plt
-import localization as lx
+# import localization as lx
 from sklearn import datasets, linear_model
+# from .ipGeolocator import ipGeolocator as lx
+import netmetGeolocator as lx
+
 #%%
 ############ Planetlab
 api_server = xmlrpclib.ServerProxy('https://www.planet-lab.eu/PLCAPI/', allow_none=True)
@@ -66,7 +69,7 @@ for hostname in dataframe['hostnames']:
 
 ############## UNCOMMENT TO CREATE NEW RTT DISTANCE FILE ############
 
-# os.system("/home/vamsi/src/master-3/netmet/ip_geolocation/rtt_dist.sh > /home/vamsi/src/master-3/netmet/ip_geolocation/rtt_dist.dat")
+os.system("/home/vamsi/src/master-3/netmet/ip_geolocation/rtt_dist.sh > /home/vamsi/src/master-3/netmet/ip_geolocation/rtt_dist.dat")
 
 
 #%%
@@ -229,27 +232,40 @@ def geolocateIP (ip):
     # Any new method to find the optimize target location should be added here.
     ###########################################################################
     try:
-        P=lx.Project(mode='Earth1',solver='LSE')
+        locator=lx.ipGeolocator(solver='target_lse')
+        target,target_id=locator.add_target()
+        
+        it=0
+        for i in range(len(n_lochosts)):
+            
+            if(it>=3):
+                break
+            # print(n_locrtt_target[i])
+            if(n_locrtt_target[i]==n_locrtt_target[i]):
+                it=it+1
+                locator.add_landmark(n_lochosts[i],n_loclat[i],n_loclon[i])
+                # print(n_lochosts[i],n_loclat[i],n_loclon[i])
+                target.add_measure(n_lochosts[i],regr1.predict(np.array([n_locrtt_target[i]])[:,np.newaxis])[0])
+                # print(n_lochosts[i],regr1.predict(np.array([n_locrtt_target[i]])[:,np.newaxis])[0])
+        # locator.add_landmark('anchore_A',n_loclat[0],n_loclon[0])
+        # locator.add_landmark('anchore_B',n_loclat[1],n_loclon[1])
+        # locator.add_landmark('anchore_C',n_loclat[2],n_loclon[2])
         
         
-        P.add_anchor('anchore_A',(n_loclat[0],n_loclon[0]))
-        P.add_anchor('anchore_B',(n_loclat[1],n_loclon[1]))
-        P.add_anchor('anchore_C',(n_loclat[2],n_loclon[2]))
         
-        t,label=P.add_target()
-        
-        t.add_measure('anchore_A',regr1.predict(np.array([n_locrtt_target[0]])[:,np.newaxis])[0])
-        t.add_measure('anchore_B',regr1.predict(np.array([n_locrtt_target[1]])[:,np.newaxis])[0])
-        t.add_measure('anchore_C',regr1.predict(np.array([n_locrtt_target[2]])[:,np.newaxis])[0])
-        
-        P.solve()
-        
-        return (list([t.loc.x,t.loc.y]))
+        # target.add_measure('anchore_A',regr1.predict(np.array([n_locrtt_target[0]])[:,np.newaxis])[0])
+        # target.add_measure('anchore_B',regr1.predict(np.array([n_locrtt_target[1]])[:,np.newaxis])[0])
+        # target.add_measure('anchore_C',regr1.predict(np.array([n_locrtt_target[2]])[:,np.newaxis])[0])
+        # print("no")
+        locator.locate()
+        # print("hi")
+        return (list([target.loc.lat,target.loc.lon]))
     except:
 
         return(list([0,0]))
-    ###########################################################################
         
+    ###########################################################################
+       
 
 
 #%%
