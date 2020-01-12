@@ -69,7 +69,7 @@ for hostname in dataframe['hostnames']:
 
 ############## UNCOMMENT TO CREATE NEW RTT DISTANCE FILE ############
 
-os.system("/home/vamsi/src/master-3/netmet/ip_geolocation/rtt_dist.sh > /home/vamsi/src/master-3/netmet/ip_geolocation/rtt_dist.dat")
+# os.system("/home/vamsi/src/master-3/netmet/ip_geolocation/rtt_dist.sh > /home/vamsi/src/master-3/netmet/ip_geolocation/rtt_dist.dat")
 
 
 #%%
@@ -150,8 +150,10 @@ ax1.set_title("rtt and distance relation between planetlab landmarks \n(upmc_net
 ax1.scatter(x1,y1,s=1)
 ax1.plot(x1,y1_pred)
 
+
+
 #%%
-def geolocateIP (ip):
+def geolocateIP (ip,sol):
     os.system("/home/vamsi/src/master-3/netmet/ip_geolocation/loc.sh "+ip+" > /home/vamsi/src/master-3/netmet/ip_geolocation/loc.dat")
     node_df = pd.read_csv("loc.dat",delimiter=',',usecols=[1,3],names=['hostname','min_rtt'])
 #    #%%
@@ -232,7 +234,7 @@ def geolocateIP (ip):
     # Any new method to find the optimize target location should be added here.
     ###########################################################################
     try:
-        locator=lx.ipGeolocator(solver='target_lse')
+        locator=lx.ipGeolocator(solver=sol)
         target,target_id=locator.add_target()
         
         it=0
@@ -275,52 +277,53 @@ headers = {
 'Content-Type': 'application/json',
 }
 
-IpGeoloc=pd.read_csv("ips1.txt",usecols=[0],names=['ip'])
-
-lati=list()
-longi=list()
-sc=list()
-os.system("rm /home/vamsi/src/master-3/netmet/ip_geolocation/scores1.dat")
-file=open("/home/vamsi/src/master-3/netmet/ip_geolocation/scores1.dat", 'w+')
-file.close()
-for ip in IpGeoloc["ip"]:
-
-    ############ GEO LOCATE ####################
-    
-    file=open("/home/vamsi/src/master-3/netmet/ip_geolocation/scores1.dat", 'a+')
-    location = geolocateIP(str(ip))
-    latitude=location[0]
-    longitude=location[1]
-    dat={}
-    
-    try:
-        response = DbIpCity.get(ip, api_key='free')
-        latitu =  response.latitude
-        longitu = response.longitude
-    except:
-        latitu = 90
-        longitu = 90
-    lati.append(latitude)
-    longi.append(longitude)
-    
-    
-    ################# FINALLY CHECK THE SCORE OF OBTAINED GEO LOCATION FROM MATTHIEU'S API ###########3
-# data = '{"' + str(ip) + '":[' + str(latitude) + "," + str(longitude) + ']}'
-    dat[str(ip)]=[latitude,longitude]
-    data=json.dumps(dat)
-    scoreReq = requests.post('http://ares.planet-lab.eu:8000/', headers=headers, data=data)
-    scoreResp = scoreReq.content.decode('utf-8')
-    score=json.loads(scoreResp)
-    sc.append(score["score"])
-    # file.write(hostname + "\n")
-    file.write("ip," + str(ip) + ",latitude," + str(latitude) + ",longitude," + str(longitude) + ",score," + str(score["score"]) + ",distance_error," + str(geodesic([latitude,longitude],[latitu,longitu]).kilometers) + "\n")
+IpGeoloc=pd.read_csv("ips2.txt",usecols=[0],names=['ip'])
+solver=list(["target_matrixLse","target_lse","target_svd"])
+for sol in solver:
+    lati=list()
+    longi=list()
+    sc=list()
+    os.system("rm /home/vamsi/src/master-3/netmet/ip_geolocation/scores_"+str(sol)+".dat")
+    file=open("/home/vamsi/src/master-3/netmet/ip_geolocation/scores_"+str(sol)+".dat", 'w+')
     file.close()
-IpGeoloc["latitude"]=latitude
-IpGeoloc["longitude"]=longitude
-IpGeoloc["score"]=sc
+    for ip in IpGeoloc["ip"]:
+    
+        ############ GEO LOCATE ####################
+        
+        file=open("/home/vamsi/src/master-3/netmet/ip_geolocation/scores_"+str(sol)+".dat", 'a+')
+        location = geolocateIP(str(ip),sol)
+        latitude=location[0]
+        longitude=location[1]
+        dat={}
+        
+        try:
+            response = DbIpCity.get(ip, api_key='free')
+            latitu =  response.latitude
+            longitu = response.longitude
+        except:
+            latitu = 90
+            longitu = 90
+        lati.append(latitude)
+        longi.append(longitude)
+        
+        
+        ################# FINALLY CHECK THE SCORE OF OBTAINED GEO LOCATION FROM MATTHIEU'S API ###########3
+    # data = '{"' + str(ip) + '":[' + str(latitude) + "," + str(longitude) + ']}'
+        dat[str(ip)]=[latitude,longitude]
+        data=json.dumps(dat)
+        scoreReq = requests.post('http://ares.planet-lab.eu:8000/', headers=headers, data=data)
+        scoreResp = scoreReq.content.decode('utf-8')
+        score=json.loads(scoreResp)
+        sc.append(score["score"])
+        # file.write(hostname + "\n")
+        file.write("ip," + str(ip) + ",latitude," + str(latitude) + ",longitude," + str(longitude) + ",score," + str(score["score"]) + ",distance_error," + str(geodesic([latitude,longitude],[latitu,longitu]).kilometers) + "\n")
+        file.close()
+    IpGeoloc["latitude"]=latitude
+    IpGeoloc["longitude"]=longitude
+    IpGeoloc["score"]=sc
 
-#%%
-scores_dict = pd.read_csv("scores_ipup.dat",delimiter=',',usecols=[1,3,5,7,9],names=['ip','latitude','longitude','score','distancce_error_solvsdb'])
-scores_dict.to_json(r'scores_ipup.json',orient='records')
-with open('scores_ipup.json') as json_file:
-    scores_ipup = json.load(json_file)
+
+    scores_dict = pd.read_csv("/home/vamsi/src/master-3/netmet/ip_geolocation/scores_"+str(sol)+".dat",delimiter=',',usecols=[1,3,5,7,9],names=['ip','latitude','longitude','score','distancce_error_solvsdb'])
+    scores_dict.to_json(r"/home/vamsi/src/master-3/netmet/ip_geolocation/scores_"+str(sol)+".json",orient='records')
+    # with open('scores_ipup.json') as json_file:
+    #     scores_ipup = json.load(json_file)

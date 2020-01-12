@@ -1,4 +1,4 @@
-import .shapes as gx
+import geometry as gx
 from math import radians, cos, sin, asin, sqrt, pi
 import shapely as shx
 from shapely.geometry import Polygon,Point,MultiPolygon
