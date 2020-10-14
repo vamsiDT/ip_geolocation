@@ -25,8 +25,8 @@ from sklearn.metrics import mean_squared_error, r2_score
 api_server = xmlrpclib.ServerProxy('https://www.planet-lab.eu/PLCAPI/', allow_none=True)
 auth = {}
 auth['AuthMethod'] = 'password'
-auth['Username'] = 'f2013790@goa.bits-pilani.ac.in'
-auth['AuthString'] = 'kira.1234'
+auth['Username'] = 'xxxx'
+auth['AuthString'] = 'xxxx'
 authorized = api_server.AuthCheck(auth)
 #%%
 plslice=api_server.GetSlices(auth)[0]
@@ -113,13 +113,17 @@ dataframe1['longitude']=longitude
 
 
 #%%
+
+###########your working directory for .dat files###############3
+direc='xxxx'
+
         ################ SANITY CHECK FOR NODE STATE #####################
-file=open("/home/vamsi/src/master-3/netmet/ip_geolocation/working_nodes.dat", 'w+')
+file=open(direc+"working_nodes.dat", 'w+')
 for hostname in dataframe['hostnames']:
     print(hostname)
     file.write(hostname + "\n")
 file.close()
-file=open("/home/vamsi/src/master-3/netmet/ip_geolocation/all_working_nodes.dat", 'w+')
+file=open(direc+"all_working_nodes.dat", 'w+')
 for node in all_pl_nodes:
     print(node['hostname'])
     file.write(node['hostname'] + "\n")
@@ -128,7 +132,7 @@ file.close()
 #%%
 ############## UNCOMMENT TO CREATE NEW RTT DISTANCE FILE ############
           
-# os.system("/home/vamsi/src/master-3/netmet/ip_geolocation/rtt_dist.sh > /home/vamsi/src/master-3/netmet/ip_geolocation/rtt_dist.dat")
+# os.system(direc+"rtt_dist.sh > "+direc+"rtt_dist.dat")
 
 
 #%%
@@ -294,7 +298,7 @@ ax2.scatter(x2,y2_pred,s=1)
 
 #%%
 def runMeasurements(ip):
-    os.system("/home/vamsi/src/master-3/netmet/ip_geolocation/loc.sh "+ip+" > /home/vamsi/src/master-3/netmet/ip_geolocation/loc.dat")
+    os.system(direc+"loc.sh "+ip+" > "+direc+"loc.dat")
 #%%
 
 def geolocateIP (ip,sol):
@@ -409,8 +413,8 @@ solver=list(["target_matrixLse","target_lse","target_svd"])
 with open('netmet_geo.json') as json_file:
     netmet_geo = json.load(json_file)
 for sol in solver:
-    os.system("rm /home/vamsi/src/master-3/netmet/ip_geolocation/scores_"+str(sol)+".dat")
-    file=open("/home/vamsi/src/master-3/netmet/ip_geolocation/scores_"+str(sol)+".dat", 'w+')
+    os.system("rm "+direc+"scores_"+str(sol)+".dat")
+    file=open(direc+"scores_"+str(sol)+".dat", 'w+')
     file.close()
 for ip in IpGeoloc["ip"]:
 
@@ -422,7 +426,7 @@ for ip in IpGeoloc["ip"]:
     
         ############ GEO LOCATE ####################
         
-        file=open("/home/vamsi/src/master-3/netmet/ip_geolocation/scores_"+str(sol)+".dat", 'a+')
+        file=open(direc+"scores_"+str(sol)+".dat", 'a+')
         location = geolocateIP(str(ip),sol)
         latitude=location[0]
         longitude=location[1]
@@ -443,12 +447,6 @@ for ip in IpGeoloc["ip"]:
         
         latitu=netmet_geo[str(ip)][0]
         longitu=netmet_geo[str(ip)][1]
-    # data = '{"' + str(ip) + '":[' + str(latitude) + "," + str(longitude) + ']}'
-        # dat[str(ip)]=[latitude,longitude]
-        # data=json.dumps(dat)
-        # scoreReq = requests.post('http://ares.planet-lab.eu:8000/', headers=headers, data=data)
-        # scoreResp = scoreReq.content.decode('utf-8')
-        # score=json.loads(scoreResp)
         
         score=0
         # sc.append(score["score"])
@@ -460,7 +458,7 @@ for ip in IpGeoloc["ip"]:
     # IpGeoloc["score"]=sc
 
 #%%
-scores_dict = pd.read_csv("/home/vamsi/src/master-3/netmet/ip_geolocation/scores_"+str(sol)+".dat",delimiter=',',usecols=[1,3,5,7,9],names=['ip','latitude','longitude','score','distancce_error_solvsdb'])
-scores_dict.to_json(r"/home/vamsi/src/master-3/netmet/ip_geolocation/scores_"+str(sol)+".json",orient='records')
+scores_dict = pd.read_csv(direc+"scores_"+str(sol)+".dat",delimiter=',',usecols=[1,3,5,7,9],names=['ip','latitude','longitude','score','distancce_error_solvsdb'])
+scores_dict.to_json(r"/home/x/src/master-3/netmet/ip_geolocation/scores_"+str(sol)+".json",orient='records')
     # with open('scores_ipup.json') as json_file:
     #     scores_ipup = json.load(json_file)
