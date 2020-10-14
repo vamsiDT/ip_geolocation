@@ -1,3 +1,26 @@
+# Bib
+
+```
+Padmanabhan VN, Subramanian L. An investigation of geographic mapping techniques for Internet hosts. InProceedings of the 2001 conference on Applications, technologies, architectures, and protocols for computer communications 2001 Aug 27 (pp. 173-185).
+
+Gueye B, Ziviani A, Crovella M, Fdida S. Constraint-based geolocation of internet hosts. IEEE/ACM Transactions On Networking. 2006 Dec 19;14(6):1219-32.
+
+Gill P, Ganjali Y, Wong B, Lie D. Dude, where’s that IP? Circumventing measurement-based IP geolocation. InProceedings of the 19th USENIX conference on Security 2010 Aug 11 (pp. 16-16).
+
+Scheitle Q, Gasser O, Sattler P, Carle G. HLOC: Hints-based geolocation leveraging multiple measurement frameworks. In2017 Network Traffic Measurement and Analysis Conference (TMA) 2017 Jun 21 (pp. 1-9). IEEE.
+
+Muir JA, Van Oorschot PC. Internet geolocation and evasion. Ottawa: School of Computer Science, Carleton University. 2006 Apr 8.
+
+Gueye B, Uhlig S, Ziviani A, Fdida S. Leveraging buffering delay estimation for geolocation of Internet hosts. InInternational Conference on Research in Networking 2006 May 15 (pp. 319-330). Springer, Berlin, Heidelberg.
+
+Günther A, Hoene C. Measuring round trip times to determine the distance between WLAN nodes. InInternational conference on research in networking 2005 May 2 (pp. 768-779). Springer, Berlin, Heidelberg.
+
+Landa R, Araújo JT, Clegg RG, Mykoniati E, Griffin D, Rio M. The large-scale geography of Internet round trip times. In2013 IFIP Networking Conference 2013 May 22 (pp. 1-9). IEEE.
+
+Wang Y, Burgener D, Flores M, Kuzmanovic A, Huang C. Towards Street-Level Client-Independent IP Geolocation. InNSDI 2011 Mar 30 (Vol. 11, pp. 27-27).
+
+```
+
 # Useful source-code/tools for IP Geolocation
 
 ## source-code for published techniques
